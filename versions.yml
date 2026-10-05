@@ -1,0 +1,59 @@
+# Pinned component versions for the Detection Lab — the single source of truth.
+# When something drifts: bump it here, re-verify the affected guide end to end,
+# then update that guide's `last_verified` stamp. All versions below were
+# verified against primary sources (vendor docs / official repos) on the date
+# in `last_verified`.
+
+last_verified: 2026-09-27
+
+elastic_stack:
+  # 8.19.x is the final 8.x line. Elastic's current docs default to 9.x, so the
+  # guide deliberately uses the 8.x apt repo.
+  version: "8.19.22"
+  apt_repo: "https://artifacts.elastic.co/packages/8.x/apt"
+  docs: "https://www.elastic.co/guide/en/elasticsearch/reference/8.19/deb.html"
+
+fleet_elastic_agent:
+  version: "8.19.22" # matches the stack version
+  fleet_server_port: 8220
+
+sysmon:
+  version: "v15.22"
+  download: "https://download.sysinternals.com/files/Sysmon.zip"
+  docs: "https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon"
+
+sysmon_config:
+  source: "SwiftOnSecurity/sysmon-config"
+  branch: "master"
+  commit: "1836897f12fbd6a0a473665ef6abc34a6b497e31" # frozen since 2021-10-17
+  raw: "https://raw.githubusercontent.com/SwiftOnSecurity/sysmon-config/1836897f12fbd6a0a473665ef6abc34a6b497e31/sysmonconfig-export.xml"
+  next_step: "OlafHartong/sysmon-modular"
+
+invoke_atomic_red_team:
+  source: "redcanaryco/invoke-atomicredteam"
+  version: "2.3.0" # PowerShell Gallery, 2025-03-20
+  installer: "https://raw.githubusercontent.com/redcanaryco/invoke-atomicredteam/master/install-atomicredteam.ps1"
+  atomics_repo: "redcanaryco/atomic-red-team"
+  requires: "PowerShell 5+ on Windows, PowerShell 7 (Core) on Linux"
+
+auditd_rules:
+  source: "Neo23x0/auditd"
+  ref: "master" # no tagged releases; pin a commit SHA for reproducibility
+  raw: "https://raw.githubusercontent.com/Neo23x0/auditd/master/audit.rules"
+
+amis:
+  ubuntu_2204_ssm_param: "/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp3/ami-id"
+  windows_2022_ssm_param: "/aws/service/ami-windows-latest/Windows_Server-2022-English-Full-Base"
+  # Fill these from `terraform output amis_used` after an apply, to pin a
+  # known-good image (SSM params otherwise always resolve to the latest).
+  ubuntu_2204_ami_id: "TBD - run: terraform output amis_used"
+  windows_2022_ami_id: "TBD - run: terraform output amis_used"
+
+terraform:
+  required_version: ">= 1.5.0"
+  aws_provider: "~> 5.60"
+  random_provider: "~> 3.6"
+
+active_directory:
+  domain: "lab.local"
+  domain_controller_os: "Windows Server 2022"

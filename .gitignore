@@ -1,0 +1,25 @@
+# --- Terraform ---
+# State can contain secrets (generated passwords). NEVER commit it.
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+.terraform/
+crash.log
+crash.*.log
+
+# Your real variables (contains your IP). Commit only terraform.tfvars.example.
+terraform.tfvars
+*.auto.tfvars
+
+# --- Credentials / keys ---
+*.pem
+*.ppk
+id_rsa*
+*_key
+*.key
+
+# --- OS / editor noise ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

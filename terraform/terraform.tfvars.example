@@ -1,0 +1,10 @@
+# Copy this file to terraform.tfvars and edit. terraform.tfvars is gitignored.
+#
+# REQUIRED: your public IP in CIDR form. This is the only internet source
+# allowed to reach Kibana, SSH, and RDP. Find it with:
+#   curl https://checkip.amazonaws.com
+my_ip_cidr = "203.0.113.5/32"
+
+# Optional overrides:
+# aws_region     = "us-east-1"
+# ssh_public_key = "ssh-ed25519 AAAA... you@host"   # enables SSH to Linux hosts
