@@ -23,3 +23,8 @@ id_rsa*
 Thumbs.db
 .idea/
 .vscode/
+
+# --- AI tooling (local agent skills, not part of the lab) ---
+.agents/
+.claude/
+skills-lock.json
