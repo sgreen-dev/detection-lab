@@ -21,7 +21,10 @@ same instance IDs and private IPs, Elastic/Fleet Server at `10.10.1.129`.
 |---|---|---|
 | Kibana login as `elastic` fails after unpark | The saved password was wrong. Parking doesn't change it; Elasticsearch returned 401 | `elasticsearch-reset-password -u elastic -b`; guide 01, step 6 note |
 
+- **2026-10-04 open items confirmed:** linux-victim is on `lab-linux`, and the
+  auditd integration is off the Windows policy. The `lab-windows` /
+  `lab-linux` policy split is done.
+
 ## Open items
 
-- Still from 2026-10-04: confirm linux-victim is on `lab-linux` and the auditd
-  integration is off the Windows policy. Add a `Sysmon silent` health rule for DC01.
+- No `Sysmon silent` health rule for **DC01** yet (from 2026-10-04).
