@@ -87,8 +87,10 @@ the Attack Server, so telemetry flows into Elasticsearch.
   - Windows: `& "C:\Program Files\Elastic\Agent\elastic-agent.exe" uninstall -f`
   The Fleet Server install on the Elastic host itself does not need it; it
   uses `--fleet-server-es-ca-trusted-fingerprint` instead.
-- Whether to install an agent on the Attack Server (useful to log attacker-side
-  activity) or leave it unmonitored.
+- ~~Whether to install an agent on the Attack Server.~~ **Resolved
+  (2026-10-05):** yes. It's enrolled on the `lab-linux` policy (same as
+  linux-victim, with `--insecure`), so attacker-side activity is logged too.
+  Rename it to `attacker` first (guide 04, "give hosts readable names").
 
 ## Next
 

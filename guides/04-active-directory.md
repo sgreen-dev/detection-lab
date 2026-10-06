@@ -44,11 +44,12 @@ and run:
 | Domain Controller | `DC01` | `Rename-Computer -NewName DC01 -Restart` |
 | Windows Victim | `WIN-VICTIM` | `Rename-Computer -NewName WIN-VICTIM -Restart` |
 | Linux Victim | `linux-victim` | see below |
+| Attack Server | `attacker` | see below (swap in `attacker`) |
 
 Windows names must be 15 characters or fewer. Each Windows host reboots and your
 SSM session drops; reconnect after about 2 minutes.
 
-On the Linux Victim, run all three:
+On each Linux host, run all three:
 
 ```bash
 sudo hostnamectl set-hostname linux-victim

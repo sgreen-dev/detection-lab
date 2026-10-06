@@ -172,6 +172,12 @@ It then asks for a **verification code**; get it on the Elastic host with:
 Kibana configures itself and shows a login page. Log in as `elastic` with the
 password from step 4.
 
+> **Lost or wrong `elastic` password?** Parking doesn't change it (it lives on
+> the Elastic host's disk), so a rejected login means the saved copy is wrong.
+> Reset it in an SSM session on the Elastic host and save the new value:
+> `sudo /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic -b`
+> This is safe: Kibana, Fleet and the agents use their own tokens, not this password.
+
 ## 7. Confirm
 
 In Kibana, open the left menu → **Stack Management → Index Management**, or just
