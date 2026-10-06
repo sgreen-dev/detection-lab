@@ -28,3 +28,14 @@ same instance IDs and private IPs, Elastic/Fleet Server at `10.10.1.129`.
 ## Open items
 
 - No `Sysmon silent` health rule for **DC01** yet (from 2026-10-04).
+
+## Next session
+
+1. Unpark, open the Kibana tunnel, check Fleet → Agents shows all five hosts
+   Healthy (including `attacker`).
+2. Build the `Sysmon silent - dc01` health rule (copy of the win-victim one).
+3. Start the [T1558.003 Kerberoasting walkthrough](../walkthroughs/T1558.003-kerberoasting/).
+
+## End of session
+
+`.\scripts\park.ps1`. **Park, don't destroy.**
