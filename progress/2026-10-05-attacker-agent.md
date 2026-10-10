@@ -27,14 +27,15 @@ same instance IDs and private IPs, Elastic/Fleet Server at `10.10.1.129`.
 
 ## Open items
 
-- No `Sysmon silent` health rule for **DC01** yet (from 2026-10-04).
+- ~~No `Sysmon silent` health rule for **DC01** yet (from 2026-10-04).~~ Done 2026-10-10.
 
 ## Next session
 
 1. Unpark, open the Kibana tunnel, check Fleet → Agents shows all five hosts
    Healthy (including `attacker`).
 2. ~~Rename hosts to the new convention.~~ **Done 2026-10-10** (see below).
-3. Build the `Sysmon silent - dc01` health rule (copy of the ws01 one).
+3. ~~Build the `Sysmon silent - dc01` health rule.~~ **Done 2026-10-10**:
+   `Sysmon silent - dc01`, exported to `detections/health-sysmon-silent-dc01.ndjson`.
 4. Start the [T1558.003 Kerberoasting walkthrough](../walkthroughs/T1558.003-kerberoasting/).
 
 ## 2026-10-10: hosts renamed
