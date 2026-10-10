@@ -26,6 +26,19 @@ _Avoid_: Attacker box, Kali, red box
 The system that ingests Victim telemetry and where Detections are authored and run.
 _Avoid_: Log platform, dashboard
 
+**Hostnames**:
+Each machine's hostname follows `<role><number>`. Use these in commands and queries, and the role names above in prose.
+
+| Role | Hostname |
+|---|---|
+| Domain Controller | `DC01` |
+| Windows Victim | `WS01` |
+| Linux Victim | `srv01` |
+| Attack Server | `atk01` |
+| SIEM (Elastic host) | `siem01` |
+
+_Avoid_: `WIN-VICTIM`, `linux-victim`, `attacker` (old names, before 2026-10-10)
+
 ### Learning
 
 **Build Guide**:

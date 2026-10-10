@@ -34,7 +34,7 @@ so they export and import through a different screen.
 
 | File | Watches |
 |---|---|
-| `health-sysmon-silent-win-victim.ndjson` | No Sysmon events from `win-victim` for 15 minutes. Backs up `T1059.001-powershell-encoded-command`, which is Sysmon-only. |
+| `health-sysmon-silent-ws01.ndjson` | No Sysmon events from `ws01` for 15 minutes. Backs up `T1059.001-powershell-encoded-command`, which is Sysmon-only. |
 
 **Export:** Stack Management → Kibana → **Saved objects** → filter Type =
 *rule* → tick the rule → **Export**, with *Include related objects* on (this

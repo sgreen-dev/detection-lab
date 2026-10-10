@@ -20,7 +20,7 @@ up as telemetry in Elastic.
 
 ### Windows Victim (elevated PowerShell)
 
-Verified on WIN-VICTIM 2026-10-02. Run each line on its own, in order.
+Verified on WS01 2026-10-02. Run each line on its own, in order.
 
 **1. Install the prerequisites first, so nothing prompts.** The framework needs
 the `powershell-yaml` module (atomics are YAML files), which comes through the

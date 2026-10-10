@@ -84,7 +84,7 @@ names, so one query can cover both.
 
 | Field | Example | Use it for |
 |---|---|---|
-| `host.name` | `win-victim` | Which machine |
+| `host.name` | `ws01` | Which machine |
 | `user.name` | `alice` | Who did it |
 | `event.code` | `1`, `4688`, `4104` | Which Windows event ID |
 | `event.category` / `event.type` | `process` / `start` | What kind of event (source-independent) |
@@ -100,7 +100,7 @@ names, so one query can cover both.
 
 1. Run one Atomic on the Windows Victim and note the time.
 2. In **Discover**, choose the `logs-*` data view, set the time range to cover
-   your run, and search `host.name : "win-victim" and event.code : "1"`.
+   your run, and search `host.name : "ws01" and event.code : "1"`.
 3. Open one event (the expand arrow on the left) and read **every field**. Find
    the parent process, the user, the full command line and the hashes.
 4. In the left sidebar, click a field name such as `process.parent.name` to see

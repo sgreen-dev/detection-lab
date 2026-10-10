@@ -24,7 +24,7 @@ two evasions, a silent data-source failure, and a licensing trade-off.
 
 - **Detection rule** `PowerShell Encoded Command Execution`: EQL, Sysmon only,
   medium severity, mapped to T1059.001.
-- **Health rule** `Sysmon silent - win-victim`: alerts if the Windows Victim
+- **Health rule** `Sysmon silent - ws01`: alerts if the Windows Victim
   stops sending Sysmon data.
 
 ---
@@ -61,7 +61,7 @@ every time; `powershell.exe` plus an encoding flag doesn't.
 
 ## 2. Telemetry
 
-One run produces three useful events on `win-victim`:
+One run produces three useful events on `ws01`:
 
 | Source | Event | Dataset | What it shows |
 |---|---|---|---|
@@ -72,9 +72,9 @@ One run produces three useful events on `win-victim`:
 Discover searches used:
 
 ```
-host.name : "win-victim" and process.name : "powershell.exe"
-host.name : "win-victim" and event.code : "4688" and process.command_line : *JgAgACgA*
-host.name : "win-victim" and event.code : "4104" and powershell.file.script_block_text : *gcm*
+host.name : "ws01" and process.name : "powershell.exe"
+host.name : "ws01" and event.code : "4688" and process.command_line : *JgAgACgA*
+host.name : "ws01" and event.code : "4104" and powershell.file.script_block_text : *gcm*
 ```
 
 4104 shows why script-block logging matters: encoding hides a command from the
@@ -218,19 +218,19 @@ licence or a trial, and this lab stays on the free Basic licence.
 The only reason to keep 4688 in the rule was resilience if Sysmon broke. That's
 a data-health problem, so it gets its own rule:
 
-**`Sysmon silent - win-victim`** (Stack Management → Rules → *Elasticsearch
+**`Sysmon silent - ws01`** (Stack Management → Rules → *Elasticsearch
 query*, free):
 
 | Setting | Value |
 |---|---|
-| Query (KQL, data view `logs-*`) | `host.name : "win-victim" and data_stream.dataset : "windows.sysmon_operational"` |
+| Query (KQL, data view `logs-*`) | `host.name : "ws01" and data_stream.dataset : "windows.sysmon_operational"` |
 | Condition | `count()` IS BELOW 1 for the last 15 minutes |
 | Check every | 5 minutes |
 
 **Testing it:** `Stop-Service Sysmon64` fails, because Sysmon 15 runs as a
 **protected process**. Even an administrator can't stop it that way, which is a
 defence against attackers. Instead, temporarily point the query at a host that
-doesn't exist (`win-victim-healthtest`): the rule goes **Active**. Change it
+doesn't exist (`ws01-healthtest`): the rule goes **Active**. Change it
 back and it returns to **OK**.
 
 4688 events are still collected and remain available for investigations.
@@ -245,7 +245,7 @@ Export**. Saved as
 (rule revision 7, with the investigation guide).
 
 The health rule is a Stack rule, exported separately through Saved objects to
-[`../../detections/health-sysmon-silent-win-victim.ndjson`](../../detections/health-sysmon-silent-win-victim.ndjson).
+[`../../detections/health-sysmon-silent-ws01.ndjson`](../../detections/health-sysmon-silent-ws01.ndjson).
 See the [detections README](../../detections/README.md) for how to import it. It
 arrives disabled.
 

@@ -113,11 +113,11 @@ Access TA0006 → T1558 → T1558.003), schedule, and why each choice.)*
 - **True positive:** re-run the Atomic and confirm an alert from **DC01**.
 - **Check which event matched and why.** Open the alert; don't just count it.
 - **False positives:** use Rule preview over **Last 7 days** for history, then do
-  normal domain activity (log on to WIN-VICTIM as `alice`, browse a share) and
+  normal domain activity (log on to WS01 as `alice`, browse a share) and
   confirm it stays quiet.
 - **Variations:** if more than one Atomic exists, does the rule catch each one?
 - **Data source health:** this rule depends on DC01's Security log. Consider a
-  health rule like `Sysmon silent - win-victim`, for DC01's `system.security`.
+  health rule like `Sysmon silent - ws01`, for DC01's `system.security`.
 
 *(Fill in: an iterations table, a regression table, and latency, like
 T1059.001.)*

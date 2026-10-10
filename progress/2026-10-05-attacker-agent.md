@@ -33,8 +33,25 @@ same instance IDs and private IPs, Elastic/Fleet Server at `10.10.1.129`.
 
 1. Unpark, open the Kibana tunnel, check Fleet → Agents shows all five hosts
    Healthy (including `attacker`).
-2. Build the `Sysmon silent - dc01` health rule (copy of the win-victim one).
-3. Start the [T1558.003 Kerberoasting walkthrough](../walkthroughs/T1558.003-kerberoasting/).
+2. ~~Rename hosts to the new convention.~~ **Done 2026-10-10** (see below).
+3. Build the `Sysmon silent - dc01` health rule (copy of the ws01 one).
+4. Start the [T1558.003 Kerberoasting walkthrough](../walkthroughs/T1558.003-kerberoasting/).
+
+## 2026-10-10: hosts renamed
+
+Hostnames now follow `<role><number>` (see `CONTEXT.md`):
+WIN-VICTIM → `WS01`, linux-victim → `srv01`, attacker → `atk01`,
+Elastic host `ip-10-10-1-129` → `siem01`. DC01 unchanged. Steps are in guide 04,
+"Renaming hosts in a lab that's already built".
+
+- Verified: all five report the new names over SSM, agents running, WS01 still on
+  `lab.local`, Elasticsearch and Kibana up on siem01.
+- `srv01` had no `preserve_hostname` file (the 2026-09-27 rename never added
+  one), so it would have reverted on the next boot. Added.
+- `Sysmon silent` rule edited in Kibana to `Sysmon silent - ws01`, query
+  `host.name : "ws01"`.
+- Events from before the rename keep the old names; search both, e.g.
+  `host.name : ("ws01" or "win-victim")`.
 
 ## End of session
 

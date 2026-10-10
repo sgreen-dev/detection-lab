@@ -89,8 +89,8 @@ the Attack Server, so telemetry flows into Elasticsearch.
   uses `--fleet-server-es-ca-trusted-fingerprint` instead.
 - ~~Whether to install an agent on the Attack Server.~~ **Resolved
   (2026-10-05):** yes. It's enrolled on the `lab-linux` policy (same as
-  linux-victim, with `--insecure`), so attacker-side activity is logged too.
-  Rename it to `attacker` first (guide 04, "give hosts readable names").
+  srv01, with `--insecure`), so attacker-side activity is logged too.
+  Rename it to `atk01` first (guide 04, "give hosts readable names").
 
 ## Next
 

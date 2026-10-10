@@ -39,32 +39,76 @@ aws ssm describe-instance-information --region us-east-1 --query "InstanceInform
 Open an SSM session to each host (`aws ssm start-session --region us-east-1 --target <instance-id>`)
 and run:
 
+The names follow the common `<role><number>` convention: a short role code plus
+a two-digit number. The domain supplies the "lab" part (`ws01.lab.local`).
+
 | Host | New name | Command |
 |---|---|---|
 | Domain Controller | `DC01` | `Rename-Computer -NewName DC01 -Restart` |
-| Windows Victim | `WIN-VICTIM` | `Rename-Computer -NewName WIN-VICTIM -Restart` |
-| Linux Victim | `linux-victim` | see below |
-| Attack Server | `attacker` | see below (swap in `attacker`) |
+| Windows Victim | `WS01` (workstation) | `Rename-Computer -NewName WS01 -Restart` |
+| Linux Victim | `srv01` (server) | see below |
+| Attack Server | `atk01` | see below (swap in `atk01`) |
+| Elastic host | `siem01` | see below |
 
 Windows names must be 15 characters or fewer. Each Windows host reboots and your
-SSM session drops; reconnect after about 2 minutes.
+SSM session drops; reconnect after about 2 minutes. Windows shows names in
+capitals (`WS01`); Elastic stores them lowercase, so KQL queries use
+`host.name : "ws01"`.
 
 On each Linux host, run all three:
 
 ```bash
-sudo hostnamectl set-hostname linux-victim
+sudo hostnamectl set-hostname srv01
 echo 'preserve_hostname: true' | sudo tee /etc/cloud/cloud.cfg.d/99-keep-hostname.cfg
 sudo systemctl restart elastic-agent
 ```
 
 The middle line stops cloud-init from resetting the name on the next boot.
 
-Leave the Elastic host's name alone. It's easy to spot in Fleet (it's the only
-one on *Fleet Server Policy*), and renaming the host that runs the stack risks
-breaking its certificates.
+> Walked on the live lab 2026-10-10.
+
+On the **Elastic host**, first comment out `cluster.initial_master_nodes`. Setup
+wrote the old hostname there, and the setting is only needed the very first time
+the cluster starts. Then rename and restart:
+
+```bash
+sudo sed -i 's/^cluster.initial_master_nodes/#cluster.initial_master_nodes/' /etc/elasticsearch/elasticsearch.yml
+sudo hostnamectl set-hostname siem01
+echo 'preserve_hostname: true' | sudo tee /etc/cloud/cloud.cfg.d/99-keep-hostname.cfg
+sudo systemctl restart elasticsearch kibana elastic-agent
+```
+
+Agents and Fleet Server reach Elasticsearch by IP, not by hostname, so the
+self-signed certificates keep working. Check with
+`curl -k -u elastic https://localhost:9200/_cluster/health` (expect
+`"status":"green"` or `"yellow"`).
 
 **Check:** Fleet → Agents shows the new names on the same rows (no re-enrollment
 needed). Events collected before the rename keep the old name.
+
+### Renaming hosts in a lab that's already built
+
+> Walked on the live lab 2026-10-10.
+
+If the lab was built under the old names (`WIN-VICTIM`, `linux-victim`,
+`attacker`, `ip-10-10-x-x`), the Linux commands above work as-is. Three things
+are different:
+
+- **WS01 is domain-joined**, so the rename needs a domain admin credential.
+  Read it from SSM, as in the join step:
+
+  ```powershell
+  $cred = New-Object System.Management.Automation.PSCredential("LAB\labadmin", (ConvertTo-SecureString (Get-SSMParameterValue -Name "/detection-lab/domain_admin_password" -WithDecryption $true -Region us-east-1).Parameters[0].Value -AsPlainText -Force)); Rename-Computer -NewName WS01 -DomainCredential $cred -Restart
+  ```
+
+- **DC01 keeps its name.** Renaming a promoted domain controller isn't worth the
+  risk.
+- **Anything that filters on the old name stops matching.** Update the
+  `Sysmon silent` health rule's query to `host.name : "ws01"` and rename it
+  `Sysmon silent - ws01` (or re-import
+  [`detections/health-sysmon-silent-ws01.ndjson`](../detections/health-sysmon-silent-ws01.ndjson)).
+  Searches across the rename date need both names, e.g.
+  `host.name : ("ws01" or "win-victim")`.
 
 ## Outline
 
@@ -182,7 +226,7 @@ Windows logs very little detail by default. This section turns on the events
 the walkthroughs rely on. It has two halves:
 
 - **A Group Policy Object (GPO)** for two registry settings. Linked to the whole
-  domain, it applies automatically to DC01 now and to WIN-VICTIM once it joins.
+  domain, it applies automatically to DC01 now and to WS01 once it joins.
 - **`auditpol`** for the audit categories, run on each Windows host. (Setting
   these through a GPO means hand-editing files in SYSVOL, which isn't worth it
   for a lab.)
@@ -213,7 +257,7 @@ Set-GPRegistryValue -Name "Lab Audit Logging" -Key "HKLM\Software\Policies\Micro
 gpupdate /force
 ```
 
-**On DC01** (and later on WIN-VICTIM, after it joins), enable the audit categories:
+**On DC01** (and later on WS01, after it joins), enable the audit categories:
 
 ```powershell
 "Process Creation","Logon","Special Logon","Credential Validation","Kerberos Authentication Service","Kerberos Service Ticket Operations","User Account Management","Security Group Management" | ForEach-Object { auditpol /set /subcategory:"$_" /success:enable /failure:enable }
@@ -245,9 +289,9 @@ carry the script text in `powershell.file.script_block_text`.
 
 ### Join the Windows Victim
 
-All commands run in an SSM session **on WIN-VICTIM**.
+All commands run in an SSM session **on WS01**.
 
-**1. Make sure WIN-VICTIM can find the domain.** It must use DC01 for DNS:
+**1. Make sure WS01 can find the domain.** It must use DC01 for DNS:
 
 ```powershell
 Resolve-DnsName lab.local
@@ -283,10 +327,10 @@ Restart-Computer -Force
 ```
 
 Expect `Domain : lab.local` and `PartOfDomain : True`. On DC01,
-`Get-ADComputer WIN-VICTIM` should return the computer account.
+`Get-ADComputer WS01` should return the computer account.
 
 > **Join "didn't happen" with no error?** Check `C:\Windows\debug\NetSetup.LOG` on
-> WIN-VICTIM. If its newest entries predate today, `Add-Computer` never reached
+> WS01. If its newest entries predate today, `Add-Computer` never reached
 > the DC (e.g. the credential prompt was cancelled). Rerun step 2.
 
 ## Verify
