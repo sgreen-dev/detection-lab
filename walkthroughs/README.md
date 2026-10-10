@@ -23,7 +23,7 @@ curriculum you must follow in order.
 | ATT&CK | Technique | Tactic | Walkthrough | Status |
 |---|---|---|---|---|
 | T1059.001 | PowerShell | Execution | [powershell](./T1059.001-powershell/) | ✅ complete (2026-10-04) |
-| T1558.003 | Kerberoasting | Credential Access | [kerberoasting](./T1558.003-kerberoasting/) | 🚧 stub |
+| T1558.003 | Kerberoasting | Credential Access | [kerberoasting](./T1558.003-kerberoasting/) | ✅ complete |
 
 *Add a row per walkthrough as you write it. Suggested next targets once the
 pipeline is proven: T1003 (OS Credential Dumping), T1053 (Scheduled Task/Job).*

@@ -6,6 +6,7 @@ named `YYYY-MM-DD-<short-topic>.md`.
 
 | Date | Session | Lab state at end |
 |---|---|---|
+| 2026-10-10 | [Rename, DC01 health rule, Kerberoasting](./2026-10-10-rename-kerberoasting.md) | **NOT parked.** Hosts renamed to `<role><number>`; `Sysmon silent - dc01` built; T1558.003 Kerberoasting walkthrough complete + rule exported |
 | 2026-10-05 | [Attacker agent, `elastic` password reset](./2026-10-05-attacker-agent.md) | Attack Server renamed `attacker` and enrolled on `lab-linux`; policy split confirmed. Next: DC01 health rule, then Kerberoasting |
 | 2026-10-04 | [First detection: T1059.001](./2026-10-04-t1059-detection.md) | **Parked**. T1059.001 rule + Sysmon health rule built and exported. Next: check agent policies, then the T1558.003 Kerberoasting walkthrough (stub added) |
 | 2026-10-02 | [Rebuild, AD, auditd, Atomic Red Team](./2026-10-02-ad-auditd-atomics.md) | **Parked** (stopped + NAT removed). All guides done; Atomic test 17 run (events found 2026-10-04) |

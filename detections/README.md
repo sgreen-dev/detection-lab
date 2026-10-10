@@ -11,7 +11,17 @@ One file per rule, named by the ATT&CK technique it detects:
 ```
 detections/
   T1059.001-powershell-encoded-command.ndjson   # exported from Kibana
+  T1558.003-kerberoasting-user-spn.ndjson
 ```
+
+| File | Detects | Index |
+|---|---|---|
+| `T1059.001-powershell-encoded-command.ndjson` | PowerShell launched with an encoded command | `logs-windows.sysmon_operational-*` |
+| `T1558.003-kerberoasting-user-spn.ndjson` | Kerberos service ticket (4769) requested for a user-account SPN (`svc_sql`) | `logs-system.security-*` |
+
+> Export is **per screen**: a detection rule exported from Saved objects comes
+> back empty (`exportedCount:0`, "excluded"). Detection rules export from
+> Security → Rules; only the Stack-based health rules below use Saved objects.
 
 ## Exporting a rule from Kibana
 
