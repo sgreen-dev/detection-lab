@@ -46,6 +46,7 @@ so they export and import through a different screen.
 |---|---|
 | `health-sysmon-silent-ws01.ndjson` | No Sysmon events from `ws01` for 15 minutes. Backs up `T1059.001-powershell-encoded-command`, which is Sysmon-only. |
 | `health-sysmon-silent-dc01.ndjson` | No Sysmon events from `dc01` for 15 minutes. Same rule, for the Domain Controller. |
+| `health-security-silent-dc01.ndjson` | No Security log events (`system.security`) from `dc01` for 15 minutes. Backs up `T1558.003-kerberoasting-user-spn`, which reads the Security log, not Sysmon. |
 
 **Export:** Stack Management → Kibana → **Saved objects** → filter Type =
 *rule* → tick the rule → **Export**, with *Include related objects* on (this

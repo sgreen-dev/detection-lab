@@ -263,8 +263,11 @@ within the schedule window. Confirmed by opening the alert, not just the count.
 - **Variations:** if more than one Atomic exists, does the rule catch each one?
 - **Data source health:** this rule depends on DC01's **Security log**
   (`system.security`), not Sysmon, so `Sysmon silent - dc01` doesn't cover it.
-  Add a `Security log silent - dc01` health rule built the same way, with
-  `data_stream.dataset : "system.security"`.
+  A `Security log silent - dc01` health rule, built the same way with
+  `data_stream.dataset : "system.security"`, covers it
+  ([`health-security-silent-dc01.ndjson`](../../detections/health-security-silent-dc01.ndjson)).
+  Tested 2026-10-29 by stopping the Elastic Agent on DC01: the alert went
+  Active, then cleared after the agent restarted.
 
 *(Fill in: an iterations table, a regression table, and latency, like
 T1059.001.)*

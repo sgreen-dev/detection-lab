@@ -60,6 +60,7 @@ terraform/     Bare infrastructure: VPC, machines, security groups, SSM access
 guides/        Build Guides — stand up the lab, in order (01 → 06)
 walkthroughs/  Detection Walkthroughs — run an attack, author a detection (by ATT&CK id)
 detections/    Exported, version-controlled Elastic detection rules
+artifacts/     Screenshots of rules and tests, kept as evidence
 versions.yml   Pinned, last-verified versions of every component
 docs/          Architecture, cost, and teardown
 CONTEXT.md     Glossary
