@@ -23,10 +23,12 @@
 
 ## Lab state
 
-Unparked this session. Park with `.\scripts\park.ps1` at the end.
+**Parked** at end of session (verified: 5 stopped, no NAT).
 
 ## Next
 
-- Pick the next technique for walkthrough #3.
+- Walkthrough #3: **T1003.001 LSASS dump via `comsvcs.dll` MiniDump** on WS01.
+  First check whether the Sysmon config logs LSASS access (Event 10); expect
+  Defender to block the Atomic test.
 - Optional: grant `alice` *Log on as a batch job* so a Kerberoast run shows a
   real user as the requester.
