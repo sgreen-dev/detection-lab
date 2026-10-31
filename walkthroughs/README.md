@@ -24,6 +24,7 @@ curriculum you must follow in order.
 |---|---|---|---|---|
 | T1059.001 | PowerShell | Execution | [powershell](./T1059.001-powershell/) | ✅ complete (2026-10-04) |
 | T1558.003 | Kerberoasting | Credential Access | [kerberoasting](./T1558.003-kerberoasting/) | ✅ complete |
+| T1003.001 | LSASS Memory (comsvcs.dll) | Credential Access | [lsass-comsvcs](./T1003.001-lsass-comsvcs/) | 📝 draft (verify on live lab) |
 
 *Add a row per walkthrough as you write it. Suggested next targets once the
 pipeline is proven: T1003 (OS Credential Dumping), T1053 (Scheduled Task/Job).*
