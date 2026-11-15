@@ -74,6 +74,15 @@ against. If a step no longer matches reality, that's the file to fix first.
 
 ## Status
 
-Being built. The Terraform and the Elastic Build Guide come first; remaining
-guides and the first Walkthrough (T1059.001, PowerShell) follow. Guides marked
-**stub** are outlines, not yet verified end-to-end.
+Working lab. All six Build Guides have been walked end to end, most recently
+against Elastic 8.19.22.
+
+| Detection | ATT&CK | Status |
+|---|---|---|
+| PowerShell encoded command | T1059.001 | Complete, alert confirmed on the live lab |
+| Kerberoasting (service ticket for a user SPN) | T1558.003 | Complete, alert confirmed on the live lab |
+| LSASS dump via comsvcs.dll | T1003.001 | Draft, not yet run on the live lab |
+
+Three health rules alert when Sysmon or the Security log goes quiet for 15
+minutes. Exported rules are in [`detections/`](./detections/); session notes
+are in [`progress/`](./progress/).
