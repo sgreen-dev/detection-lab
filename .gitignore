@@ -18,6 +18,9 @@ id_rsa*
 *_key
 *.key
 
+# Personal scratch notes (contain pasted passwords / enrollment tokens).
+docs/detection-lab-notes.txt
+
 # --- OS / editor noise ---
 .DS_Store
 Thumbs.db

@@ -81,7 +81,7 @@ against Elastic 8.19.22.
 |---|---|---|
 | PowerShell encoded command | T1059.001 | Complete, alert confirmed on the live lab |
 | Kerberoasting (service ticket for a user SPN) | T1558.003 | Complete, alert confirmed on the live lab |
-| LSASS dump via comsvcs.dll | T1003.001 | Draft, not yet run on the live lab |
+| LSASS dump via comsvcs.dll | T1003.001 | Complete, alert confirmed on the live lab |
 
 Three health rules alert when Sysmon or the Security log goes quiet for 15
 minutes. Exported rules are in [`detections/`](./detections/); session notes

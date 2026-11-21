@@ -3,21 +3,19 @@ walkthrough: T1003.001
 technique: "OS Credential Dumping: LSASS Memory"
 tactic: Credential Access
 victim: Windows Victim (WS01) — attack and telemetry on the same host
-last_verified: null
+last_verified: 2026-11-21
 verified_versions:
   elastic_stack: 8.19.22
   invoke_atomic_red_team: 2.3.0
-status: draft
+status: complete
 ---
 
 # T1003.001 — LSASS Memory Dump via `comsvcs.dll` (Credential Access)
 
-> 📝 **STATUS: draft — not yet walked on the live lab.** This lays out the attack,
-> the telemetry we *expect*, a detection hypothesis, and a validation plan, in the
-> same shape as the completed walkthroughs. Every value marked **(confirm live)**
-> must be checked against real data on the next unpark before this is promoted to
-> `status: complete`. Do not trust the "expected" tables until then — the whole
-> point of the exercise is to build the rule on what the lab *actually* logs.
+> ✅ **Walked on the live lab 2026-11-21.** The plan and "expected" tables below
+> were written before the run and are kept as written. The dated **What was
+> run / observed / built / validated** blocks record what the lab actually did;
+> where the two differ, the dated blocks are the truth.
 
 **Why this one next:** it's the first walkthrough where we expect a **telemetry
 gap** and an **EDR fight**. The textbook signal for LSASS dumping is Sysmon
@@ -83,9 +81,21 @@ Things to sort out before running:
 - **Clean up.** Delete any `*.dmp` the test leaves in `C:\Windows\Temp` (or
   `C:\Users\Public`). A real LSASS dump on disk is sensitive even in a lab.
 
-**What was run:** *(fill in live — test number, how it was launched, whether
-Defender blocked it on the first try, and what you changed to get a completed
-dump.)*
+**What was run (2026-11-21):** Atomic **T1003.001 test 2** (comsvcs.dll
+MiniDump), launched with `Invoke-AtomicTest T1003.001 -TestNumbers 2` from an SSM
+session on WS01.
+
+- **First run, Defender on: blocked.** Defender reported
+  `Trojan:Win32/RundllLolBin.AF`, `DidThreatExecute : False`. The detection's
+  `Resources` field was the command line of the PowerShell wrapper Atomic
+  launches:
+  `CmdLine:_C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe & {C:\Windows\System32\rundll32.exe C:\windows\System32\comsvcs.dll, MiniDump (Get-Process lsass).id $env:TEMP\lsass-comsvcs.dmp full}`.
+  It was stopped at launch, so `rundll32.exe` never started.
+- **Second run, real-time protection off**
+  (`Set-MpPreference -DisableRealtimeMonitoring $true`): the dump completed and
+  wrote `C:\Windows\TEMP\lsass-comsvcs.dmp`. Removed afterwards with
+  `Invoke-AtomicTest T1003.001 -TestNumbers 2 -Cleanup`; real-time protection
+  turned back on at the end of the session.
 
 ---
 
@@ -142,8 +152,30 @@ walkthrough — Sysmon maps into both `process.*` ECS fields and
 | `winlog.event_data.TargetImage` (Event 10, if present) | Did anything open a handle to `lsass.exe`? |
 | `winlog.event_data.GrantedAccess` (Event 10, if present) | Dump-capable access mask? |
 
-**What was observed:** *(fill in live — which events fired, which didn't,
-exact field names, and whether Event 10 was present or absent.)*
+**What was observed (2026-11-21):**
+
+| Run | Sysmon 1 | Sysmon 11 | Sysmon 10 | Defender |
+|---|---|---|---|---|
+| Defender on (blocked) | none | not checked | none | detection logged |
+| Real-time protection off (dump completed) | **yes** | **yes** | none | not checked |
+
+- **Event 10 gap confirmed.** Before the attack, `Sysmon64.exe -c` showed no
+  ProcessAccess rules and the local Sysmon log held no Event 10 at all. After a
+  completed LSASS dump there was still none. The textbook rule has nothing to
+  match on this config.
+- **A blocked attempt leaves no Sysmon trace.** With Defender on, neither Kibana
+  nor WS01's local Sysmon log had an Event 1 mentioning `comsvcs`. Defender's own
+  log was the only record of the attempt, so the Event 1 rule below cannot see
+  attacks that Defender stops.
+- **Event 1 on the completed run** (field names as seen in Discover):
+  - `process.name`: `rundll32.exe`
+  - `process.parent.name`: `powershell.exe`
+  - `process.command_line`:
+    `"C:\Windows\System32\rundll32.exe" C:\windows\System32\comsvcs.dll MiniDump 684 C:\Windows\TEMP\lsass-comsvcs.dmp full`
+    (no comma after `comsvcs.dll`, unlike the Atomic source; `684` was the
+    `lsass` PID)
+- **Event 11 on the completed run:** `process.name` `rundll32.exe`, matched on
+  `file.path:*lsass-comsvcs*`.
 
 ---
 
@@ -182,22 +214,25 @@ Then work through:
 - **Noise:** does any legitimate `rundll32 … comsvcs` command line exist in
   normal operation? Expected: none. Confirm with Rule preview over Last 7 days.
 
-**What was built:** *(fill in live — final name, type, index, query, severity,
-schedule, tags, ATT&CK mapping, like the Kerberoasting table.)*
+**What was built (2026-11-21, values read from the export):**
 
 | Setting | Value |
 |---|---|
-| Name | `Credential Dumping - LSASS via comsvcs.dll MiniDump` *(proposed)* |
-| Type | EQL (Event Correlation) *(proposed)* |
+| Name | `Credential Dumping - LSASS via comsvcs.dll MiniDump` |
+| Type | EQL (Event Correlation) |
 | Index | `logs-windows.sysmon_operational-*` |
-| Query | `process where host.name == "ws01" and event.code == "1" and process.name == "rundll32.exe" and process.command_line : "*comsvcs*MiniDump*"` *(proposed)* |
-| Severity / risk | High / 73 *(proposed — confirm)* |
-| Schedule | every 5m, look back 6m *(proposed)* |
+| Query | `process where host.name == "ws01" and event.code == "1" and process.name == "rundll32.exe" and process.command_line : "*comsvcs*MiniDump*"` |
+| Severity / risk | High / 73 |
+| Schedule | every 5m, look back 6m (`from: now-6m`) |
 | Tags | `T1003.001`, `lab` |
 | ATT&CK | Credential Access TA0006 → T1003 → T1003.001 |
 
-An investigation guide (triage steps) goes in the rule's Note field so it travels
-with the export.
+The rule's Description records the blind spot: an attempt Defender blocks before
+`rundll32.exe` starts creates no Sysmon event and will not trigger the rule.
+
+Not done: the rule's Note field (investigation guide) is empty in the export, and
+the second, Event 10 rule was not built because the Sysmon config was left as it
+is.
 
 ---
 
@@ -234,7 +269,21 @@ with the export.
   `lsass` access — note that a silent-sensor health rule won't catch a
   *mis-scoped config*, only a dead agent.
 
-*(Fill in live: iterations table, regression table, latency, like T1059.001.)*
+**What was validated (2026-11-21):**
+
+| Plan step | Result |
+|---|---|
+| 1. EDR-vs-SIEM, Defender on | Done. Blocked as `Trojan:Win32/RundllLolBin.AF`; no Sysmon Event 1 in Kibana or in WS01's local log. |
+| 2. Full chain, real-time protection off | Done. Dump completed; Sysmon Event 1 and Event 11 fired. |
+| 3. Live alert | Done. Rule preview showed 1 hit (the completed run); a fresh run with the rule enabled raised an alert. |
+| 4. Telemetry gap | Shown: no Event 10 before or during a completed dump. The Sysmon config was not changed to close it. |
+| 5. False positives | Not done beyond the preview above. |
+| 6. Variations (Mimikatz, procdump) | Not done. |
+
+Afterwards the dump file was removed and real-time protection was back on
+(checked on WS01: `RealTimeProtectionEnabled` True, no
+`C:\Windows\Temp\lsass-comsvcs.dmp`). Screenshots are indexed in
+[`../../artifacts/README.md`](../../artifacts/README.md).
 
 ---
 

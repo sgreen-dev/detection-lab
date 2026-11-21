@@ -12,12 +12,14 @@ One file per rule, named by the ATT&CK technique it detects:
 detections/
   T1059.001-powershell-encoded-command.ndjson   # exported from Kibana
   T1558.003-kerberoasting-user-spn.ndjson
+  T1003.001-lsass-comsvcs-minidump.ndjson
 ```
 
 | File | Detects | Index |
 |---|---|---|
 | `T1059.001-powershell-encoded-command.ndjson` | PowerShell launched with an encoded command | `logs-windows.sysmon_operational-*` |
 | `T1558.003-kerberoasting-user-spn.ndjson` | Kerberos service ticket (4769) requested for a user-account SPN (`svc_sql`) | `logs-system.security-*` |
+| `T1003.001-lsass-comsvcs-minidump.ndjson` | `rundll32.exe` calling the `MiniDump` export of `comsvcs.dll` (LSASS dump) on `ws01` | `logs-windows.sysmon_operational-*` |
 
 > Export is **per screen**: a detection rule exported from Saved objects comes
 > back empty (`exportedCount:0`, "excluded"). Detection rules export from
