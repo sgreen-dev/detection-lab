@@ -6,6 +6,7 @@ named `YYYY-MM-DD-<short-topic>.md`.
 
 | Date | Session | Lab state at end |
 |---|---|---|
+| 2026-11-21 | [T1003.001 LSASS dump walkthrough](./2026-11-21-t1003-lsass.md) | **Parked.** T1003.001 walkthrough complete, rule exported, live alert confirmed. Sysmon Event 10 gap confirmed; Defender-blocked attempts leave no Sysmon event. Next: investigation guide, optional Event 10 rule |
 | 2026-10-29 | [Security log health rule, billing check](./2026-10-29-security-log-health.md) | **Parked.** `Security log silent - dc01` built, live-tested, exported. Account now on PAID plan, no credits. Next: T1003.001 LSASS dump walkthrough |
 | 2026-10-10 | [Rename, DC01 health rule, Kerberoasting](./2026-10-10-rename-kerberoasting.md) | **NOT parked.** Hosts renamed to `<role><number>`; `Sysmon silent - dc01` built; T1558.003 Kerberoasting walkthrough complete + rule exported |
 | 2026-10-05 | [Attacker agent, `elastic` password reset](./2026-10-05-attacker-agent.md) | Attack Server renamed `attacker` and enrolled on `lab-linux`; policy split confirmed. Next: DC01 health rule, then Kerberoasting |
